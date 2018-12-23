@@ -27,7 +27,7 @@ public class TestDownload : MonoBehaviour
                });
         DownLoader.OnDownLoadUpdate.AddListener(v =>
         {
-            this.update.text = string.Format("下载进度：{0} %", v * 100);
+            this.update.text = string.Format("下载进度：{0} %", (v * 100).ToString("f2"));
         });
 
     }

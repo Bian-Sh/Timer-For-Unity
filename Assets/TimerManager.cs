@@ -103,21 +103,20 @@ namespace QFramework.TimeExtend
         /// 构造定时器
         /// </summary>
         /// <param name="time">定时时长</param>
-        /// <param name="flag">定时器标识符</param>
+        /// <param name="flag">定时器标识符,相同的标识符将导致Timer的重新配置，请留意</param>
         /// <param name="loop">是否循环</param>
         /// <param name="ignorTimescale">是否忽略TimeScale</param>
-        private Timer(float time, string flag, bool loop = false, bool ignorTimescale = true)
+        private Timer Config(float time, string flag, bool loop = false, bool ignorTimescale = true)
         {
             IntializeDriver(); //初始化Time驱动
             _ignoreTimescale = ignorTimescale;
             Duration = time;
             _loop = loop;
             cachedTime = CurrentTime;
-            if (timers.Exists((v) => { return v._flag == flag; }))
-            {
-                if (showlog_internal) Debug.LogWarningFormat("【TimerTrigger（容错）】:存在相同的标识符【{0}】！", flag);
-            }
+            _isFinish = false;
+            _isPause = false;
             _flag = string.IsNullOrEmpty(flag) ? GetHashCode().ToString() : flag;//设置辨识标志符
+            return this;
         }
 
 
@@ -216,7 +215,9 @@ namespace QFramework.TimeExtend
         /// <returns></returns>
         public static Timer AddTimer(float time, string flag = "", bool loop = false, bool ignorTimescale = true)
         {
-            Timer timer = new Timer(time, flag, loop, ignorTimescale);
+            Timer timer = GetTimer(flag);
+            timer = timer??new Timer();
+            timer.Config(time, flag, loop, ignorTimescale);
             lock (timers)
             {
                 timers.Add(timer);
