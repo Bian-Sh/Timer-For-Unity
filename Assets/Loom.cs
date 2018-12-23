@@ -117,7 +117,6 @@ public class Loom : MonoBehaviour
     {
         if (_current == this)
         {
-
             _current = null;
         }
     }
